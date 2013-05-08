@@ -40,10 +40,10 @@ class Application
 		@main_setup = block
 	end
 
-	def initialize(&block)
+	def initialize(program_name, defaults = {}, &block)
 		instance_eval &block
 
-		@cli = setup_cli(@cli_setup) or fail 'no cli defined'
+		@cli = setup_cli(program_name, defaults, @cli_setup) or fail 'no cli defined'
 		@settings = @settings_setup ? setup_settings(@settings_setup) : @cli.parse!
 
 		root_logger = RootLogger.new(STDERR)
@@ -83,24 +83,24 @@ class Application
 
 	private
 
-	def setup_cli(block)
+	def setup_cli(program_name, defaults, block)
 		CLI.new do
 			instance_eval &block
 			option :log_file,
 				short: :l,
 				cast: Pathname,
 				description: 'log file location',
-				default: 'httpthumbnailer.log'
+				default: "#{program_name}.log"
 			option :access_log_file,
 				short: :a,
 				cast: Pathname,
 				description: 'NCSA access log file location',
-				default: 'httpthumbnailer_access.log'
+				default: "#{program_name}_access.log"
 			option :pid_file,
 				short: :p,
 				cast: Pathname,
 				description: 'PID file location',
-				default: 'httpthumbnailer.pid'
+				default: "#{program_name}.pid"
 			switch :foreground,
 				short: :f,
 				description: 'stay in foreground'
@@ -113,7 +113,7 @@ class Application
 				short: :P,
 				cast: Integer,
 				description: 'HTTP server TCP listen port',
-				default: 3100
+				default: defaults[:port] || 8080
 			option :user,
 				short: :u,
 				description: 'run worker processes as given user'
