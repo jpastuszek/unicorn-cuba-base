@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "unicorn-cuba-base"
   gem.homepage = "http://github.com/jpastuszek/unicorn-cuba-base"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = "web application based on Unicorn and Cuba framework"
+  gem.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   gem.email = "jpastuszek@gmail.com"
   gem.authors = ["Jakub Pastuszek"]
   # dependencies defined in Gemfile
@@ -39,7 +39,7 @@ end
 task :default => :spec
 
 require 'rdoc/task'
-Rake::RDocTask.new do |rdoc|
+RDoc::Task.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
