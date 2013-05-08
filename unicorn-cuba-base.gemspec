@@ -10,28 +10,39 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jakub Pastuszek"]
   s.date = "2013-05-08"
-  s.description = "application base for Unicorn HTTP server powered Cuba framework based web application"
+  s.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   s.email = "jpastuszek@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.rdoc"
+    "README.md"
   ]
   s.files = [
     ".document",
     ".rspec",
     "Gemfile",
+    "Gemfile.lock",
     "LICENSE.txt",
-    "README.rdoc",
+    "README.md",
     "Rakefile",
     "VERSION",
     "lib/unicorn-cuba-base.rb",
-    "spec/spec_helper.rb"
+    "lib/unicorn-cuba-base/plugin/error_matcher.rb",
+    "lib/unicorn-cuba-base/plugin/logging.rb",
+    "lib/unicorn-cuba-base/plugin/response_helpers.rb",
+    "lib/unicorn-cuba-base/rack/error_handling.rb",
+    "lib/unicorn-cuba-base/rack/unhandled_request.rb",
+    "lib/unicorn-cuba-base/root_logger.rb",
+    "lib/unicorn-cuba-base/stats.rb",
+    "lib/unicorn-cuba-base/stats_reporter.rb",
+    "spec/root_logger_spec.rb",
+    "spec/spec_helper.rb",
+    "unicorn-cuba-base.gemspec"
   ]
   s.homepage = "http://github.com/jpastuszek/unicorn-cuba-base"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.15"
-  s.summary = "web application based on Unicorn and Cuba framework"
+  s.summary = "web appliaction base powered by Unicorn and Cuba"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
