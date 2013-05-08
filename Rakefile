@@ -17,7 +17,7 @@ Jeweler::Tasks.new do |gem|
   gem.name = "unicorn-cuba-base"
   gem.homepage = "http://github.com/jpastuszek/unicorn-cuba-base"
   gem.license = "MIT"
-  gem.summary = "web application based on Unicorn and Cuba framework"
+  gem.summary = "web appliaction base powered by Unicorn and Cuba"
   gem.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   gem.email = "jpastuszek@gmail.com"
   gem.authors = ["Jakub Pastuszek"]
