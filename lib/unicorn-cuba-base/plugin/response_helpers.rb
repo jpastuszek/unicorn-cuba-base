@@ -22,7 +22,8 @@ module Plugin
 			write code, 'text/plain', msg.gsub("\n", "\r\n") + "\r\n"
 		end
 
-		def write_error(code, msg)
+		def write_error(code, error)
+			msg = error.message
 			log.warn "sending #{code} error response: #{msg}"
 			ResponseHelpers.stats.incr_total_write_error
 			write_plain code, msg
@@ -52,10 +53,11 @@ module Plugin
 		end
 
 		def write_plain_part(msg)
-			write_part 'text/plain', msg.gsub("\n", "\r\n")
+			write_part 'text/plain', msg.to_s.gsub("\n", "\r\n")
 		end
 
-		def write_error_part(msg)
+		def write_error_part(error)
+			msg = error.message
 			log.warn "sending error in multipart response part: #{msg}"
 			ResponseHelpers.stats.incr_total_write_error_part
 			write_plain_part msg
