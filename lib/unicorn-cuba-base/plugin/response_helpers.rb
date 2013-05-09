@@ -44,23 +44,27 @@ module Plugin
 			ResponseHelpers.stats.incr_total_write_multipart
 		end
 
-		def write_part(content_type, body)
+		def write_part(content_type, body, headers = {})
 			res.write "--#{@boundary}\r\n"
-			res.write "Content-Type: #{content_type}\r\n\r\n"
+			res.write "Content-Type: #{content_type}\r\n"
+			headers.each_pair do |name, value|
+				res.write "#{name}: #{value}\r\n"
+			end
+			res.write "\r\n"
 			ResponseHelpers.stats.incr_total_write_part
 			res.write body
 			res.write "\r\n"
 		end
 
-		def write_plain_part(msg)
-			write_part 'text/plain', msg.to_s.gsub("\n", "\r\n")
+		def write_plain_part(msg, headers = {})
+			write_part 'text/plain', msg.to_s.gsub("\n", "\r\n"), headers
 		end
 
-		def write_error_part(error)
+		def write_error_part(code, error)
 			msg = error.message
 			log.warn "sending error in multipart response part: #{msg}"
 			ResponseHelpers.stats.incr_total_write_error_part
-			write_plain_part msg
+			write_plain_part msg, 'Status' => code
 		end
 
 		def write_epilogue
