@@ -50,10 +50,9 @@ class Application
 		root_logger.level = RootLogger::WARN
 		root_logger.level = RootLogger::INFO if @settings.verbose
 		root_logger.level = RootLogger::DEBUG if @settings.debug
+		Controler.root_logger = root_logger
 
 		Daemon.daemonize(@settings.pid_file, @settings.log_file) unless @settings.foreground
-
-		Controler.root_logger = root_logger
 
 		Controler.settings[:listeners] = ["#{@settings.bind}:#{@settings.port}"]
 		Controler.settings[:access_log_file] = @settings.access_log_file
