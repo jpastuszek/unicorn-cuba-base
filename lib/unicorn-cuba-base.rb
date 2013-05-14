@@ -16,13 +16,7 @@ require_relative 'unicorn-cuba-base/rack/error_handling'
 require_relative 'unicorn-cuba-base/rack/unhandled_request'
 
 class Controler < Cuba
-	def self.root_logger=(root_logger)
-		@@root_logger = root_logger
-	end
-
-	def self.logger_for(class_obj)
-		@@root_logger.logger_for(class_obj)
-	end
+	include ClassLogging
 end
 
 require_relative 'unicorn-cuba-base/stats_reporter'
@@ -50,7 +44,7 @@ class Application
 		root_logger.level = RootLogger::WARN
 		root_logger.level = RootLogger::INFO if @settings.verbose
 		root_logger.level = RootLogger::DEBUG if @settings.debug
-		Controler.root_logger = root_logger
+		Controler.logger = root_logger
 
 		Daemon.daemonize(@settings.pid_file, @settings.log_file) unless @settings.foreground
 

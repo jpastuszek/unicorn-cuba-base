@@ -49,6 +49,10 @@ class RootLogger < Logger
 		ClassLogger.new(self, class_obj)
 	end
 
+	def root_logger
+		self
+	end
+
 	def inspect
 		"#<RootLogger #{"0x%X" % object_id}>"
 	end
@@ -66,8 +70,18 @@ module ClassLogging
 
 		def log
 			unless @@logger[self]
-				@@logger[self] = RootLogger::ClassLogger.new(Logger.new(STDERR), self)
-				@@logger[self].warn "new default logger crated"
+				new_root_logger = false
+				# use root logger from ancestor or create new one
+				root_logger = 
+					if logging_class = ancestors.find{|an| an != self and an.respond_to? :log}
+						logging_class.log.root_logger
+					else
+						new_root_logger = true
+						Logger.new(STDERR)
+					end
+				logger = RootLogger::ClassLogger.new(root_logger, self)
+				logger.warn "new default logger crated" if new_root_logger
+				@@logger[self] = logger
 			end
 			@@logger[self]
 		end
