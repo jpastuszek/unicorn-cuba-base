@@ -74,7 +74,7 @@ module ClassLogging
 				# use root logger from ancestor or create new one
 				root_logger = 
 					if logging_class = ancestors.find{|an| an != self and an.respond_to? :log}
-						logging_class.log.root_logger
+						logging_class.log.respond_to?(:root_logger) ? logging_class.log.root_logger : logging_class.log
 					else
 						new_root_logger = true
 						Logger.new(STDERR)
