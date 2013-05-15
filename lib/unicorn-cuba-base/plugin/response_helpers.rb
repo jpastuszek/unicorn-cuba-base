@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'unicorn-cuba-base/stats'
 
 module Plugin
 	module ResponseHelpers

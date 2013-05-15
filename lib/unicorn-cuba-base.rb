@@ -1,7 +1,6 @@
 require 'cli'
 require 'cuba'
 require 'unicorn'
-require 'raindrops'
 require 'facter'
 require 'daemon'
 require 'pathname'

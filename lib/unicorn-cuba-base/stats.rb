@@ -1,3 +1,5 @@
+require 'raindrops'
+
 module Stats
 	def def_stats(*stat_names)
 		@@local_stats ||= {}
