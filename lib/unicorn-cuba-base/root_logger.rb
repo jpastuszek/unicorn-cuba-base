@@ -13,7 +13,7 @@ class RootLogger < Logger
 		end
 
 		def respond_to?(method)
-			@root_logger.respond_to? method
+			super or @root_logger.respond_to? method
 		end
 
 		def method_missing(name, *args, &block)
@@ -79,6 +79,9 @@ module ClassLogging
 						new_root_logger = true
 						Logger.new(STDERR)
 					end
+
+				root_logger.kind_of? RootLogger::ClassLogger and fail "got ClassLogger root logger: #{self}"
+
 				logger = RootLogger::ClassLogger.new(root_logger, self)
 				logger.warn "new default logger crated" if new_root_logger
 				@@logger[self] = logger
