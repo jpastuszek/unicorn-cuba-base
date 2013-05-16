@@ -20,7 +20,8 @@ module Plugin
 		end
 
 		def write_plain(code, msg)
-			write code, 'text/plain', msg.gsub("\n", "\r\n") + "\r\n"
+			msg = msg.join("\r\n") if msg.is_a? Array
+			write code, 'text/plain', msg.gsub(/(?<!\r)\n/, "\r\n") + "\r\n"
 		end
 
 		def write_error(code, error)
