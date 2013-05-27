@@ -32,7 +32,7 @@ class RootLogger < Logger
 
 				# set program name to current class
 				@root_logger.progname = @progname
-				@root_logger.send(name, message, &block)
+				@root_logger.send(name, message.chomp, &block)
 			else
 				@root_logger.send(name, *args, &block)
 			end
