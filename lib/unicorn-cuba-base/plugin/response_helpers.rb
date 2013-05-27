@@ -24,6 +24,11 @@ module Plugin
 			write code, 'text/plain', msg.gsub(/(?<!\r)\n/, "\r\n") + "\r\n"
 		end
 
+		def write_url_list(code, msg)
+			msg = msg.join("\r\n") if msg.is_a? Array
+			write code, 'text/uri-list', msg.gsub(/(?<!\r)\n/, "\r\n") + "\r\n"
+		end
+
 		def write_error(code, error)
 			msg = error.message
 			log.warn "sending #{code} error response: #{msg}"
