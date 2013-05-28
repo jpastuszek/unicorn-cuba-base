@@ -5,7 +5,6 @@ gem "unicorn", ">= 4.6.2"
 gem "raindrops", "~> 0.11"
 gem "cli", "~> 1.1.0"
 gem "facter", "~> 1.6.11"
-gem "daemon", "~> 1"
 gem "ruby-ip", "~> 0.9"
 
 # Add dependencies to develop your gem here.

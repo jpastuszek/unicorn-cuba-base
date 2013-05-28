@@ -1,8 +1,8 @@
 require 'cli'
 require 'cuba'
 require 'unicorn'
+require 'unicorn/launcher'
 require 'facter'
-require 'daemon'
 require 'pathname'
 require 'ip'
 
@@ -45,7 +45,27 @@ class Application
 		root_logger.level = RootLogger::DEBUG if @settings.debug
 		Controler.logger = root_logger
 
-		Daemon.daemonize(@settings.pid_file, @settings.log_file) unless @settings.foreground
+		unicorn_settings = {}
+		unicorn_settings[:logger] = root_logger.logger_for(Unicorn::HttpServer)
+		unicorn_settings[:pid] = @settings.pid_file.to_s
+		unicorn_settings[:worker_processes] = @settings.worker_processes
+		unicorn_settings[:timeout] = @settings.worker_timeout
+		unicorn_settings[:listeners] = ["#{@settings.bind}:#{@settings.port}"]
+		unicorn_settings[:user] = @settings.user if @settings.user
+
+		unless @settings.foreground
+			unicorn_settings[:stderr_path] = @settings.log_file.to_s
+			unicorn_settings[:stdout_path] = @settings.log_file.to_s
+
+			Unicorn::Launcher.daemonize!(unicorn_settings) 
+
+			# capture startup messages
+			@settings.log_file.open('ab') do |log|
+				log.sync = true
+				STDERR.reopen log
+				STDOUT.reopen log
+			end
+		end
 
 		Controler.settings[:listeners] = ["#{@settings.bind}:#{@settings.port}"]
 		Controler.settings[:access_log_file] = @settings.access_log_file
@@ -62,13 +82,6 @@ class Application
 		main_controler.use Rack::CommonLogger, access_log_file
 		main_controler.use Rack::ErrorHandling
 		main_controler.use Rack::UnhandledRequest
-
-		unicorn_settings = {}
-		unicorn_settings[:logger] = root_logger.logger_for(Unicorn::HttpServer)
-		unicorn_settings[:worker_processes] = @settings.worker_processes
-		unicorn_settings[:timeout] = @settings.worker_timeout
-		unicorn_settings[:listeners] = ["#{@settings.bind}:#{@settings.port}"]
-		unicorn_settings[:user] = @settings.user if @settings.user
 
 		Unicorn::HttpServer.new(main_controler, unicorn_settings).start.join
 	end

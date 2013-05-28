@@ -4,7 +4,6 @@ GEM
     cli (1.1.1)
     cuba (3.1.0)
       rack
-    daemon (1.1.0)
     diff-lcs (1.2.4)
     facter (1.6.18)
     git (1.2.5)
@@ -40,7 +39,6 @@ PLATFORMS
 DEPENDENCIES
   cli (~> 1.1.0)
   cuba (~> 3.0)
-  daemon (~> 1)
   facter (~> 1.6.11)
   jeweler (~> 1.8.4)
   raindrops (~> 0.11)
