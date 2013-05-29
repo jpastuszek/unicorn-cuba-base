@@ -50,7 +50,7 @@ class Application
 		unicorn_settings[:pid] = @settings.pid_file.to_s
 		unicorn_settings[:worker_processes] = @settings.worker_processes
 		unicorn_settings[:timeout] = @settings.worker_timeout
-		unicorn_settings[:listeners] = ["#{@settings.bind}:#{@settings.port}"]
+		unicorn_settings[:listeners] = @settings.listener
 		unicorn_settings[:user] = @settings.user if @settings.user
 
 		unless @settings.foreground
@@ -67,7 +67,7 @@ class Application
 			end
 		end
 
-		Controler.settings[:listeners] = ["#{@settings.bind}:#{@settings.port}"]
+		Controler.settings[:listeners] = @settings.listener
 		Controler.settings[:access_log_file] = @settings.access_log_file
 
 		Controler.plugin Plugin::ErrorMatcher
@@ -109,16 +109,10 @@ class Application
 			switch :foreground,
 				short: :f,
 				description: 'stay in foreground'
-			option :bind,
-				short: :b,
-				cast: IP,
-				description: 'HTTP server bind address - use 0.0.0.0 to bind to all interfaces',
-				default: IP.new('127.0.0.1')
-			option :port,
-				short: :P,
-				cast: Integer,
-				description: 'HTTP server TCP listen port',
-				default: defaults[:port] || 8080
+			options :listener,
+				short: :L,
+				description: 'HTTP server listener (bind) address in format <ip>:<port> or unix:<file> or ~[<username>]/<file> for UNIX sockets',
+				default: '127.0.0.1:' + (defaults[:port] || 8080).to_s
 			option :user,
 				short: :u,
 				description: 'run worker processes as given user'
