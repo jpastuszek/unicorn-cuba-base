@@ -14,9 +14,15 @@ class MemoryLimit
 			@root_limit = ml
 		end
 		
-		def read
+		def read(bytes = nil)
 			data = @root_limit.get do |max_read_bytes|
-				super max_read_bytes + 1 or return '' # read() always returns '' on EOF
+				if not bytes or bytes > max_read_bytes
+					data = super max_read_bytes
+					raise MemoryLimitedExceededError unless eof?
+					data or '' # read() always returns '' on EOF
+				else
+					super bytes or ''
+				end
 			end
 		end
 	end	
@@ -36,7 +42,7 @@ class MemoryLimit
 
 	def borrow(bytes)
 		log.debug "borrowing #{bytes} from #{@limit} bytes of limit"
-		bytes > @limit and raise MemoryLimitedExceededError.new
+		bytes > @limit and raise MemoryLimitedExceededError
 		@limit -= bytes
 		bytes
 	end
