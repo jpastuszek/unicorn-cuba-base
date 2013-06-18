@@ -38,11 +38,13 @@ class MemoryLimit
 		log.debug "borrowing #{bytes} from #{@limit} bytes of limit"
 		bytes > @limit and raise MemoryLimitedExceededError.new
 		@limit -= bytes
+		bytes
 	end
 
 	def return(bytes)
 		log.debug "returning #{bytes} to #{@limit} bytes of limit"
 		@limit += bytes
+		bytes
 	end
 
 	def io(io)
