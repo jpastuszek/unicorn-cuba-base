@@ -11,8 +11,10 @@ require_relative 'unicorn-cuba-base/root_logger'
 require_relative 'unicorn-cuba-base/plugin/error_matcher'
 require_relative 'unicorn-cuba-base/plugin/logging'
 require_relative 'unicorn-cuba-base/plugin/response_helpers'
+require_relative 'unicorn-cuba-base/plugin/memory_limit'
 require_relative 'unicorn-cuba-base/rack/error_handling'
 require_relative 'unicorn-cuba-base/rack/unhandled_request'
+require_relative 'unicorn-cuba-base/rack/memory_limit'
 
 class Controler < Cuba
 	include ClassLogging
@@ -44,6 +46,7 @@ class Application
 		root_logger.level = RootLogger::INFO if @settings.verbose
 		root_logger.level = RootLogger::DEBUG if @settings.debug
 		Controler.logger = root_logger
+		MemoryLimit.logger = Controler.logger_for(MemoryLimit)
 
 		unicorn_settings = {}
 		unicorn_settings[:logger] = root_logger.logger_for(Unicorn::HttpServer)
@@ -73,6 +76,7 @@ class Application
 		Controler.plugin Plugin::ErrorMatcher
 		Controler.plugin Plugin::Logging
 		Controler.plugin Plugin::ResponseHelpers
+		Controler.plugin Plugin::MemoryLimit
 
 		@main_setup or fail 'no main controler provided'
 		main_controler = setup_main(@main_setup) or fail 'no main controler class returned'
@@ -82,6 +86,7 @@ class Application
 		main_controler.use Rack::CommonLogger, access_log_file
 		main_controler.use Rack::ErrorHandling
 		main_controler.use Rack::UnhandledRequest
+		main_controler.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
 
 		Unicorn::HttpServer.new(main_controler, unicorn_settings).start.join
 	end
@@ -126,6 +131,10 @@ class Application
 				cast: Integer,
 				description: 'workers handling the request taking longer than this time period will be forcibly killed',
 				default: 60
+			option :limit_memory,
+				cast: Integer,
+				description: 'memory usage limit in MiB',
+				default: 128
 			switch :verbose,
 				short: :v,
 				description: 'enable verbose logging (INFO)'
