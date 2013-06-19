@@ -1,7 +1,7 @@
 module Plugin
   module ErrorMatcher
     def error(*klass)
-      klass.any?{|k| env["app.error"].is_a? k}
+      lambda {klass.any?{|k| env["app.error"].is_a? k} and captures.push(env["app.error"])}
     end
 
     def error?
