@@ -55,6 +55,7 @@ class Application
 		unicorn_settings[:timeout] = @settings.worker_timeout
 		unicorn_settings[:listeners] = @settings.listener
 		unicorn_settings[:user] = @settings.user if @settings.user
+		unicorn_settings[:rewindable_input] = false # don't keep the upload data in memory or on disk (tmp)
 
 		unless @settings.foreground
 			unicorn_settings[:stderr_path] = @settings.log_file.to_s

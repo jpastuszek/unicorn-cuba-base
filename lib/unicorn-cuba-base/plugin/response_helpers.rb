@@ -13,6 +13,7 @@ module Plugin
 		)
 
 		def write(code, content_type, body)
+			req.body.read # read all remaining upload before we send response so that client will read it
 			res.status = code
 			res["Content-Type"] = content_type
 			ResponseHelpers.stats.incr_total_write
