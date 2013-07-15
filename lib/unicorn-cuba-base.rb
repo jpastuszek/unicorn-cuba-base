@@ -35,6 +35,10 @@ class Application
 		@main_setup = block
 	end
 
+	def after_fork(&block)
+		@after_fork = block
+	end
+
 	def initialize(program_name, defaults = {}, &block)
 		instance_eval &block
 
@@ -56,6 +60,7 @@ class Application
 		unicorn_settings[:listeners] = @settings.listener
 		unicorn_settings[:user] = @settings.user if @settings.user
 		unicorn_settings[:rewindable_input] = false # don't keep the upload data in memory or on disk (tmp)
+		unicorn_settings[:after_fork] = @after_fork if @after_fork
 
 		unless @settings.foreground
 			unicorn_settings[:stderr_path] = @settings.log_file.to_s
