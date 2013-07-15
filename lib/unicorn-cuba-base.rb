@@ -126,7 +126,7 @@ class Application
 				short: :w,
 				cast: Integer,
 				description: 'start given number of worker processes',
-				default: Facter.processorcount.to_i + 1
+				default: (Facter.processorcount.to_i + 1) * (defaults[:processor_count_factor] || 1)
 			option :worker_timeout,
 				short: :t,
 				cast: Integer,
