@@ -136,7 +136,7 @@ class Application
 				short: :t,
 				cast: Integer,
 				description: 'workers handling the request taking longer than this time period will be forcibly killed',
-				default: 60
+				default: 300
 			option :limit_memory,
 				cast: Integer,
 				description: 'memory usage limit in MiB',
