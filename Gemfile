@@ -1,5 +1,7 @@
 source "http://rubygems.org"
 
+ruby "1.9.3"
+
 gem "cuba", "~> 3.0"
 gem "unicorn", ">= 4.6.2"
 gem "raindrops", "~> 0.11"
