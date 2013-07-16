@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "unicorn-cuba-base"
-  s.version = "0.0.0"
+  s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jakub Pastuszek"]
-  s.date = "2013-05-09"
+  s.date = "2013-07-16"
   s.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   s.email = "jpastuszek@gmail.com"
   s.extra_rdoc_files = [
@@ -26,14 +26,18 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/unicorn-cuba-base.rb",
+    "lib/unicorn-cuba-base/memory_limit.rb",
     "lib/unicorn-cuba-base/plugin/error_matcher.rb",
     "lib/unicorn-cuba-base/plugin/logging.rb",
+    "lib/unicorn-cuba-base/plugin/memory_limit.rb",
     "lib/unicorn-cuba-base/plugin/response_helpers.rb",
     "lib/unicorn-cuba-base/rack/error_handling.rb",
+    "lib/unicorn-cuba-base/rack/memory_limit.rb",
     "lib/unicorn-cuba-base/rack/unhandled_request.rb",
     "lib/unicorn-cuba-base/root_logger.rb",
     "lib/unicorn-cuba-base/stats.rb",
     "lib/unicorn-cuba-base/stats_reporter.rb",
+    "spec/memory_limit_spec.rb",
     "spec/root_logger_spec.rb",
     "spec/spec_helper.rb",
     "unicorn-cuba-base.gemspec"
@@ -41,7 +45,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/jpastuszek/unicorn-cuba-base"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.15"
+  s.rubygems_version = "1.8.25"
   s.summary = "web appliaction base powered by Unicorn and Cuba"
 
   if s.respond_to? :specification_version then
@@ -53,7 +57,6 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<raindrops>, ["~> 0.11"])
       s.add_runtime_dependency(%q<cli>, ["~> 1.1.0"])
       s.add_runtime_dependency(%q<facter>, ["~> 1.6.11"])
-      s.add_runtime_dependency(%q<daemon>, ["~> 1"])
       s.add_runtime_dependency(%q<ruby-ip>, ["~> 0.9"])
       s.add_development_dependency(%q<rspec>, ["~> 2.13"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.9"])
@@ -64,7 +67,6 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<raindrops>, ["~> 0.11"])
       s.add_dependency(%q<cli>, ["~> 1.1.0"])
       s.add_dependency(%q<facter>, ["~> 1.6.11"])
-      s.add_dependency(%q<daemon>, ["~> 1"])
       s.add_dependency(%q<ruby-ip>, ["~> 0.9"])
       s.add_dependency(%q<rspec>, ["~> 2.13"])
       s.add_dependency(%q<rdoc>, ["~> 3.9"])
@@ -76,7 +78,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<raindrops>, ["~> 0.11"])
     s.add_dependency(%q<cli>, ["~> 1.1.0"])
     s.add_dependency(%q<facter>, ["~> 1.6.11"])
-    s.add_dependency(%q<daemon>, ["~> 1"])
     s.add_dependency(%q<ruby-ip>, ["~> 0.9"])
     s.add_dependency(%q<rspec>, ["~> 2.13"])
     s.add_dependency(%q<rdoc>, ["~> 3.9"])
