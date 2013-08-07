@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'json'
 require 'unicorn-cuba-base/stats'
 
 module Plugin
@@ -12,33 +13,39 @@ module Plugin
 			:total_write_error_part
 		)
 
-		def write(code, content_type, body)
+		def write(code, content_type, body, headers = {})
 			req.body.read # read all remaining upload before we send response so that client will read it
 			res.status = code
 			res["Content-Type"] = content_type
+			headers.each do |key, value|
+				res[key] = value
+			end
 			ResponseHelpers.stats.incr_total_write
 			res.write body
 		end
 
-		def write_plain(code, msg)
+		def write_text(code, content_type, msg, headers = {})
 			msg = msg.join("\r\n") if msg.is_a? Array
-			write code, 'text/plain', msg.gsub(/(?<!\r)\n/, "\r\n") + "\r\n"
+			write code, content_type, (msg.gsub(/(?<!\r)\n/, "\r\n") + "\r\n"), headers
 		end
 
-		def write_url_list(code, msg)
-			msg = msg.join("\r\n") if msg.is_a? Array
-			write code, 'text/uri-list', msg.gsub(/(?<!\r)\n/, "\r\n") + "\r\n"
+		def write_plain(code, msg, headers = {})
+			write_text code, 'text/plain', msg, headers
 		end
 
-		def write_error(code, error)
+		def write_url_list(code, msg, headers = {})
+			write_text code, 'text/uri-list', msg, headers
+		end
+
+		def write_error(code, error, headers = {})
 			msg = error.message
 			log.warn "sending #{code} error response: #{msg}"
 			ResponseHelpers.stats.incr_total_write_error
-			write_plain code, msg
+			write_plain code, msg, headers
 		end
 
-		def write_url_list(code, urls)
-			write code, 'text/uri-list', urls.join("\r\n") + "\r\n"
+		def write_json(code, obj, headers = {})
+			write code, 'application/json', obj.to_json, headers
 		end
 
 		# Multipart
@@ -68,11 +75,11 @@ module Plugin
 			write_part 'text/plain', msg.to_s.gsub("\n", "\r\n"), headers
 		end
 
-		def write_error_part(code, error)
+		def write_error_part(code, error, headers = {})
 			msg = error.message
 			log.warn "sending error in multipart response part: #{msg}"
 			ResponseHelpers.stats.incr_total_write_error_part
-			write_plain_part msg, 'Status' => code
+			write_plain_part msg, headers.merge('Status' => code)
 		end
 
 		def write_epilogue
