@@ -15,7 +15,7 @@ class MemoryLimit
 		end
 		
 		def read(bytes = nil)
-			data = @root_limit.get do |max_read_bytes|
+			data = @root_limit.get("#{self.class.name} IO read") do |max_read_bytes|
 				if not bytes or bytes > max_read_bytes
 					data = super max_read_bytes
 					raise MemoryLimitedExceededError unless eof?
@@ -28,27 +28,36 @@ class MemoryLimit
 	end	
 
 	def initialize(bytes = 256 * 1024 ** 2)
-		log.info "using memory limit of #{bytes} bytes" if bytes
+		log.info "setting up new memory limit of #{bytes} bytes" if bytes
 		@limit = bytes
 	end
 
 	attr_reader :limit
 
-	def get
+	def get(reason = nil)
 		yield(@limit).tap do |data|
-			borrow data.bytesize if data
+			borrow(data.bytesize, reason) if data
 		end
 	end
 
-	def borrow(bytes)
-		log.debug "borrowing #{bytes} from #{@limit} bytes of limit"
+	def borrow(bytes, reason = nil)
+		if reason
+			log.debug "borrowing #{bytes} from #{@limit} bytes of limit for #{reason}"
+		else
+			log.debug "borrowing #{bytes} from #{@limit} bytes of limit"
+		end
+		
 		bytes > @limit and raise MemoryLimitedExceededError
 		@limit -= bytes
 		bytes
 	end
 
-	def return(bytes)
-		log.debug "returning #{bytes} to #{@limit} bytes of limit"
+	def return(bytes, reason = nil)
+		if reason
+			log.debug "returning #{bytes} to #{@limit} bytes of limit used for #{reason}"
+		else
+			log.debug "returning #{bytes} to #{@limit} bytes of limit"
+		end
 		@limit += bytes
 		bytes
 	end
