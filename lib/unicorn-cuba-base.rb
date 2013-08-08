@@ -90,9 +90,9 @@ class Application
 		access_log_file = @settings.access_log_file.open('a+')
 		access_log_file.sync = true
 		main_controler.use Rack::CommonLogger, access_log_file
+		main_controler.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
 		main_controler.use Rack::ErrorHandling
 		main_controler.use Rack::UnhandledRequest
-		main_controler.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
 
 		Unicorn::HttpServer.new(main_controler, unicorn_settings).start.join
 	end
