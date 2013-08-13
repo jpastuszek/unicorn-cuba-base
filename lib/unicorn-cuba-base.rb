@@ -21,6 +21,7 @@ class Controler < Cuba
 end
 
 require_relative 'unicorn-cuba-base/stats_reporter'
+require_relative 'unicorn-cuba-base/default_error_reporter'
 
 class Application
 	def cli(&block)
