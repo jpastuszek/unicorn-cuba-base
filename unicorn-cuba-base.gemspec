@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "unicorn-cuba-base"
-  s.version = "1.0.0"
+  s.version = "1.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jakub Pastuszek"]
-  s.date = "2013-07-16"
+  s.date = "2013-09-11"
   s.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   s.email = "jpastuszek@gmail.com"
   s.extra_rdoc_files = [
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/unicorn-cuba-base.rb",
+    "lib/unicorn-cuba-base/default_error_reporter.rb",
     "lib/unicorn-cuba-base/memory_limit.rb",
     "lib/unicorn-cuba-base/plugin/error_matcher.rb",
     "lib/unicorn-cuba-base/plugin/logging.rb",
