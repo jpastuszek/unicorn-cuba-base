@@ -28,7 +28,7 @@ class MemoryLimit
 	end	
 
 	def initialize(bytes = 256 * 1024 ** 2)
-		log.info "setting up new memory limit of #{bytes} bytes" if bytes
+		log.debug "setting up new memory limit of #{bytes} bytes" if bytes
 		@limit = bytes
 	end
 
