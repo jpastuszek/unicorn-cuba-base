@@ -1,6 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    capture-output (1.0.0)
     cli (1.3.1)
     cuba (3.1.0)
       rack
@@ -37,6 +38,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  capture-output (~> 1.0)
   cli (~> 1.3)
   cuba (~> 3.0)
   facter (~> 1.6.11)

@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 require 'unicorn-cuba-base/root_logger'
 require 'stringio'
 
-describe  do
+describe RootLogger do
 	let! :log_out do
 		StringIO.new
 	end
@@ -56,3 +56,57 @@ describe  do
 	end
 end
 
+require 'capture-output'
+
+describe SyslogLogDev do
+	subject do
+		SyslogLogDev.new('unicorn-cuba-base-test', 'daemon', true)
+	end
+
+	after :each do
+		subject.close
+	end
+
+	it 'should write messages to syslog expecting first word to be log level' do
+		Capture.stderr{subject.write 'INFO hello world'}.should include '<Info>'
+		Capture.stderr{subject.write 'INFO hello world'}.should include 'hello world'
+	end
+end
+
+describe RootSyslogLogger do
+	subject do
+		@subject ||= RootSyslogLogger.new('unicorn-cuba-base-test', 'daemon', true).logger_for(RSpec)
+	end
+
+	after :each do
+		subject.close
+	end
+
+	it 'should log to syslog' do
+		log_out = Capture.stderr{subject.info 'hello world'}
+
+		log_out.should include 'unicorn-cuba-base-test'
+		log_out.should match /\[[0-9]+\]/
+		log_out.should include '<Info>:'
+	end
+
+	it 'should include message' do
+		Capture.stderr{subject.info 'hello world'}.should include 'hello world'
+	end
+
+	it 'should include class name' do
+		Capture.stderr{subject.info 'hello world'}.should include 'RSpec'
+	end
+
+	it 'should map log levels to syslog severities' do
+		Capture.stderr{subject.debug 'hello world'}.should include '<Debug>'
+		Capture.stderr{subject.info 'hello world'}.should include '<Info>'
+		Capture.stderr{subject.warn 'hello world'}.should include '<Warning>'
+		Capture.stderr{subject.error 'hello world'}.should include '<Error>'
+		Capture.stderr{subject.fatal 'hello world'}.should include '<Critical>'
+	end
+
+	it 'should handle multiline logs by replacing new line with tab' do
+		Capture.stderr{subject.info "hello\nworld\ntest"}.should include "hello\tworld\ttest\t\n"
+	end
+end

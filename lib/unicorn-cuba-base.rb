@@ -47,7 +47,14 @@ class Application
 		@cli = setup_cli(program_name, defaults, @cli_setup) or fail 'no cli defined'
 		@settings = @settings_setup ? setup_settings(@settings_setup) : @cli.parse!
 
-		root_logger = RootLogger.new(STDERR)
+		root_logger = if @settings.syslog_facility
+			# open /dev/null as log file if we are using syslog and we are not in foreground
+			@settings.log_file = Pathname.new '/dev/null' unless @settings.foreground
+			RootSyslogLogger.new(program_name, @settings.syslog_facility, @settings.foreground)
+		else
+			RootLogger.new
+		end
+
 		root_logger.level = RootLogger::WARN
 		root_logger.level = RootLogger::INFO if @settings.verbose
 		root_logger.level = RootLogger::DEBUG if @settings.debug
@@ -79,7 +86,7 @@ class Application
 		end
 
 		Controler.settings[:listeners] = @settings.listener
-		Controler.settings[:access_log_file] = @settings.access_log_file
+		#Controler.settings[:access_log_file] = @settings.access_log_file
 
 		Controler.plugin Plugin::ErrorMatcher
 		Controler.plugin Plugin::Logging
@@ -89,9 +96,14 @@ class Application
 		@main_setup or fail 'no main controler provided'
 		main_controler = setup_main(@main_setup) or fail 'no main controler class returned'
 
-		access_log_file = @settings.access_log_file.open('a+')
-		access_log_file.sync = true
-		main_controler.use Rack::CommonLogger, access_log_file
+		if @settings.syslog_facility
+			main_controler.use Rack::CommonLogger, root_logger
+		else
+			access_log_file = @settings.access_log_file.open('a+')
+			access_log_file.sync = true
+			main_controler.use Rack::CommonLogger, access_log_file
+		end
+
 		main_controler.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
 		main_controler.use Rack::ErrorHandling
 		main_controler.use Rack::UnhandledRequest
@@ -109,6 +121,9 @@ class Application
 				cast: Pathname,
 				description: 'log file location',
 				default: "#{program_name}.log"
+			option :syslog_facility,
+				short: :s,
+				description: 'when set logs will be sent to syslog instead of log files; one of: auth, authpriv, cron, daemon, ftp, kern, lpr, mail, news, syslog, user, uucp, local0, local1, local2, local3, local4, local5, local6, local7'
 			option :access_log_file,
 				short: :a,
 				cast: Pathname,
