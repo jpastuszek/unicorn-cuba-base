@@ -9,6 +9,10 @@ class DefaultErrorReporter < Controler
 			raise error
 		end
 
+		on error URI::InvalidURIError do |error|
+			write_error 400, error
+		end
+
 		on error StandardError do |error|
 			log.error "unhandled error while processing request: #{env['REQUEST_METHOD']} #{env['SCRIPT_NAME']}[#{env["PATH_INFO"]}]", error
 			log.debug {

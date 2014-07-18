@@ -6,6 +6,7 @@ require 'facter'
 require 'pathname'
 require 'ip'
 
+require_relative 'unicorn-cuba-base/uri_ext'
 require_relative 'unicorn-cuba-base/stats'
 require_relative 'unicorn-cuba-base/root_logger'
 require_relative 'unicorn-cuba-base/plugin/error_matcher'
@@ -67,7 +68,7 @@ class Application
 			unicorn_settings[:stderr_path] = @settings.log_file.to_s
 			unicorn_settings[:stdout_path] = @settings.log_file.to_s
 
-			Unicorn::Launcher.daemonize!(unicorn_settings) 
+			Unicorn::Launcher.daemonize!(unicorn_settings)
 
 			# capture startup messages
 			@settings.log_file.open('ab') do |log|
