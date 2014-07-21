@@ -191,8 +191,9 @@ module ClassLogging
 				root_logger = if an = ancestors.find{|an| an != self and an.respond_to? :log and an.log.respond_to? :root_logger}
 					an.log.root_logger
 				else
-					logger.warn 'no root logger found; using default logger'
-					Logger.new(STDERR)
+					RootLogger.new.tap do |logger|
+						logger.warn 'no root logger found; using default logger'
+					end
 				end
 
 				@@logger[self] = RootLogger::ClassLogger.new(root_logger, self)

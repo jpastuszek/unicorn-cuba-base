@@ -1,4 +1,4 @@
-class DefaultErrorReporter < Controler
+class DefaultErrorReporter < Controller
 	self.define do
 		on error Rack::UnhandledRequest::UnhandledRequestError do |error|
 			write_error 404, error

@@ -1,8 +1,8 @@
-class StatsReporter < Controler
+class StatsReporter < Controller
 	def self.<<(stats)
 		(@@stats ||= []) << stats
 	end
-	
+
 	self.define do
 		all_stats = {}
 		@@stats.each do |stats|

@@ -14,7 +14,6 @@ describe RootLogger do
 
 	it 'should log to given logger' do
 		subject.info 'hello world'
-		p log_out.string
 		log_out.string.should include 'INFO'
 		log_out.string.should include 'hello world'
 	end
@@ -40,7 +39,6 @@ describe RootLogger do
 		it 'should report class name' do
 			TestApp = Class.new
 			subject.logger_for(TestApp).info 'hello world'
-			p log_out.string
 			log_out.string.should include 'TestApp'
 
 			subject.logger_for(String).info 'hello world'
@@ -68,7 +66,6 @@ describe RootLogger do
 
 		it 'should work with chaining' do
 			subject.with_meta(type: 'access-log').with_meta(blah: 'xxx').info 'GET /asdfas'
-			puts log_out.string
 			log_out.string.should include 'type="access-log" blah="xxx"'
 		end
 
@@ -149,7 +146,6 @@ describe RootSyslogLogger do
 		end
 
 		it 'should allow use of meta data' do
-			p Capture.stderr{subject.with_meta('type' => 'access-log').write "hello world"}
 			Capture.stderr{subject.with_meta('type' => 'access-log').write "hello world"}.should include 'type="access-log"'
 		end
 	end

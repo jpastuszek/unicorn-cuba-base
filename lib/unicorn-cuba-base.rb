@@ -18,7 +18,7 @@ require_relative 'unicorn-cuba-base/rack/unhandled_request'
 require_relative 'unicorn-cuba-base/rack/memory_limit'
 require_relative 'unicorn-cuba-base/rack/xid_logging'
 
-class Controler < Cuba
+class Controller < Cuba
 	include ClassLogging
 end
 
@@ -59,8 +59,8 @@ class Application
 		root_logger.level = RootLogger::WARN
 		root_logger.level = RootLogger::INFO if @settings.verbose
 		root_logger.level = RootLogger::DEBUG if @settings.debug
-		Controler.logger = root_logger
-		MemoryLimit.logger = Controler.logger_for(MemoryLimit)
+		Controller.logger = root_logger
+		MemoryLimit.logger = Controller.logger_for(MemoryLimit)
 
 		unicorn_settings = {}
 		unicorn_settings[:logger] = root_logger.logger_for(Unicorn::HttpServer)
@@ -86,32 +86,32 @@ class Application
 			end
 		end
 
-		Controler.settings[:listeners] = @settings.listener
-		#Controler.settings[:access_log_file] = @settings.access_log_file
+		Controller.settings[:listeners] = @settings.listener
+		#Controller.settings[:access_log_file] = @settings.access_log_file
 
-		Controler.plugin Plugin::ErrorMatcher
-		Controler.plugin Plugin::Logging
-		Controler.plugin Plugin::ResponseHelpers
-		Controler.plugin Plugin::MemoryLimit
+		Controller.plugin Plugin::ErrorMatcher
+		Controller.plugin Plugin::Logging
+		Controller.plugin Plugin::ResponseHelpers
+		Controller.plugin Plugin::MemoryLimit
 
 		@main_setup or fail 'no main controller provided'
-		main_controler = setup_main(@main_setup) or fail 'no main controler class returned'
+		main_controller = setup_main(@main_setup) or fail 'no main controller class returned'
 
-		main_controler.use Rack::XIDLogging, root_logger, @settings.xid_header if @settings.xid_header
+		main_controller.use Rack::XIDLogging, root_logger, @settings.xid_header if @settings.xid_header
 
 		if @settings.syslog_facility
-			main_controler.use Rack::CommonLogger, root_logger.with_meta(type: 'access-log')
+			main_controller.use Rack::CommonLogger, root_logger.with_meta(type: 'access-log')
 		else
 			access_log_file = @settings.access_log_file.open('a+')
 			access_log_file.sync = true
-			main_controler.use Rack::CommonLogger, access_log_file
+			main_controller.use Rack::CommonLogger, access_log_file
 		end
 
-		main_controler.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
-		main_controler.use Rack::ErrorHandling
-		main_controler.use Rack::UnhandledRequest
+		main_controller.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
+		main_controller.use Rack::ErrorHandling
+		main_controller.use Rack::UnhandledRequest
 
-		Unicorn::HttpServer.new(main_controler, unicorn_settings).start.join
+		Unicorn::HttpServer.new(main_controller, unicorn_settings).start.join
 	end
 
 	private
