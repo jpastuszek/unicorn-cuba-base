@@ -25,7 +25,7 @@ class RootLogger < Logger
 					if args.last.is_a? Exception
 						error = args.last
 						root_logger = root_logger.with_meta('exceptionClass' => error.class.name)
-						message = "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
+						message = "#{message}: #{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
 					end
 
 					# log with class name
@@ -45,8 +45,27 @@ class RootLogger < Logger
 	end
 
 	class MetaData < Hash
+		def initialize(parent = nil)
+			@parent = parent
+		end
+
+		attr_accessor :parent
+
 		def to_s
-			"[meta #{map{|k, v| "#{k}=\"#{v.to_s.tr('"', "'")}\""}.join(' ')}]"
+			chain = []
+			parent = self
+			while parent
+				chain << parent
+				parent = parent.parent
+			end
+
+			hash = {}
+
+			chain.reverse.each do |child|
+				hash.merge! child
+			end
+
+			"[meta #{hash.map{|k, v| "#{k}=\"#{v.to_s.tr('"', "'")}\""}.join(' ')}]"
 		end
 	end
 
@@ -81,13 +100,26 @@ class RootLogger < Logger
 
 	def with_meta(hash)
 		n = self.dup
-		n.meta = @meta.merge hash
+		n.meta = MetaData.new(@meta)
+		n.meta.merge! hash
 
 		# capture new meta hash with this new formatter proc - needed since old formatter proc will point to old object
 		n.formatter = proc do |severity, datetime, progname, msg|
 			@ext_formatter.call(severity, datetime, progname, n.meta, msg)
 		end
 		n
+	end
+
+	def with_meta_context(hash)
+		new_meta = MetaData.new
+		new_meta.merge! hash
+
+		begin
+			@meta.parent = new_meta
+			yield
+		ensure
+			@meta.parent = nil
+		end
 	end
 
 	def inspect

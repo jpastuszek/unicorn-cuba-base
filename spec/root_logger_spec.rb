@@ -64,11 +64,22 @@ describe RootLogger do
 
 			subject.info 'GET /asdfas'
 			log_out.string.lines.to_a.last.should_not include 'type="access-log"'
+		end
 
-
+		it 'should work with chaining' do
 			subject.with_meta(type: 'access-log').with_meta(blah: 'xxx').info 'GET /asdfas'
-			log_out.string.lines.to_a.last.should include 'type="access-log" blah="xxx"'
 			puts log_out.string
+			log_out.string.should include 'type="access-log" blah="xxx"'
+		end
+
+		it 'should log with metadata context' do
+			subject.with_meta_context(type: 'app-log') do
+				subject.info 'GET /asdfas'
+			end
+			log_out.string.should include 'type="app-log"'
+
+			subject.info 'GET /asdfas'
+			log_out.string.lines.to_a.last.should_not include 'type="app-log"'
 		end
 	end
 end

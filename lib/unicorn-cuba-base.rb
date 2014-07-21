@@ -16,6 +16,7 @@ require_relative 'unicorn-cuba-base/plugin/memory_limit'
 require_relative 'unicorn-cuba-base/rack/error_handling'
 require_relative 'unicorn-cuba-base/rack/unhandled_request'
 require_relative 'unicorn-cuba-base/rack/memory_limit'
+require_relative 'unicorn-cuba-base/rack/xid_logging'
 
 class Controler < Cuba
 	include ClassLogging
@@ -96,6 +97,8 @@ class Application
 		@main_setup or fail 'no main controler provided'
 		main_controler = setup_main(@main_setup) or fail 'no main controler class returned'
 
+		main_controler.use Rack::XIDLogging, root_logger, @settings.xid_header if @settings.xid_header
+
 		if @settings.syslog_facility
 			main_controler.use Rack::CommonLogger, root_logger.with_meta(type: 'access-log')
 		else
@@ -129,6 +132,9 @@ class Application
 				cast: Pathname,
 				description: 'NCSA access log file location',
 				default: "#{program_name}_access.log"
+			option :xid_header,
+				short: :x,
+				description: 'log value of named request header with request context'
 			option :pid_file,
 				short: :p,
 				cast: Pathname,
