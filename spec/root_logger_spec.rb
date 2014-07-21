@@ -14,6 +14,7 @@ describe RootLogger do
 
 	it 'should log to given logger' do
 		subject.info 'hello world'
+		p log_out.string
 		log_out.string.should include 'INFO'
 		log_out.string.should include 'hello world'
 	end
@@ -39,19 +40,35 @@ describe RootLogger do
 		it 'should report class name' do
 			TestApp = Class.new
 			subject.logger_for(TestApp).info 'hello world'
+			p log_out.string
 			log_out.string.should include 'TestApp'
 
 			subject.logger_for(String).info 'hello world'
 			log_out.string.should include 'String'
 		end
+	end
 
-		it 'should log exceptions' do
-			begin
-				raise RuntimeError, 'bad luck'
-			rescue => error
-				subject.logger_for(String).error 'hello world', error
-			end
-			log_out.string.should include 'hello world: RuntimeError: bad luck'
+	it 'should log exceptions' do
+		begin
+			raise RuntimeError, 'bad luck'
+		rescue => error
+			subject.logger_for(String).error 'hello world', error
+		end
+		log_out.string.should include 'hello world: RuntimeError: bad luck'
+	end
+
+	describe 'meta data' do
+		it 'should log with metadata in RFC5424 format' do
+			subject.with_meta(type: 'access-log').info 'GET /asdfas'
+			log_out.string.should include 'type="access-log"'
+
+			subject.info 'GET /asdfas'
+			log_out.string.lines.to_a.last.should_not include 'type="access-log"'
+
+
+			subject.with_meta(type: 'access-log').with_meta(blah: 'xxx').info 'GET /asdfas'
+			log_out.string.lines.to_a.last.should include 'type="access-log" blah="xxx"'
+			puts log_out.string
 		end
 	end
 end
@@ -113,5 +130,16 @@ describe RootSyslogLogger do
 
 	it 'should handle multiline logs by appending tab after new line (done by syslog?)' do
 		Capture.stderr{subject.info "hello\nworld\ntest"}.should include "hello\n\tworld\n\ttest\n"
+	end
+
+	describe 'direct wirtes' do
+		it 'should use Info level' do
+			Capture.stderr{subject.write "hello world"}.should include '<Info>'
+		end
+
+		it 'should allow use of meta data' do
+			p Capture.stderr{subject.with_meta('type' => 'access-log').write "hello world"}
+			Capture.stderr{subject.with_meta('type' => 'access-log').write "hello world"}.should include 'type="access-log"'
+		end
 	end
 end

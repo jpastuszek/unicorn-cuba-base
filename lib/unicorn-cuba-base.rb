@@ -97,7 +97,7 @@ class Application
 		main_controler = setup_main(@main_setup) or fail 'no main controler class returned'
 
 		if @settings.syslog_facility
-			main_controler.use Rack::CommonLogger, root_logger
+			main_controler.use Rack::CommonLogger, root_logger.with_meta(type: 'access-log')
 		else
 			access_log_file = @settings.access_log_file.open('a+')
 			access_log_file.sync = true

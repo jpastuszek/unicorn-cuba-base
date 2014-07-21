@@ -6,7 +6,7 @@ class RootLogger < Logger
 
 		def initialize(root_logger, class_obj)
 			@root_logger = root_logger
-			@progname = class_obj.name
+			@class_name = class_obj.name
 		end
 
 		def respond_to?(method)
@@ -27,10 +27,10 @@ class RootLogger < Logger
 					end.join(': ')
 				end
 
-				# set program name to current class
-				@root_logger.progname = @progname
-				@root_logger.send(name, message.chomp, &block)
+				# log with class name
+				@root_logger.with_meta('className' => @class_name).send(name, message.chomp, &block)
 			else
+				# forward to root logger
 				@root_logger.send(name, *args, &block)
 			end
 		end
@@ -42,15 +42,29 @@ class RootLogger < Logger
 		end
 	end
 
+	class MetaData < Hash
+		def to_s
+			"[meta #{map{|k, v| "#{k}=\"#{v.to_s.tr('"', "'")}\""}.join(' ')}]"
+		end
+	end
+
 	def initialize(logdev = STDERR, &formatter)
 		super(logdev)
 
-		# default formatter
-		formatter ||= proc do |severity, datetime, progname, msg|
-			"[#{datetime.utc.strftime "%Y-%m-%d %H:%M:%S.%6N %Z"}] [#{$$} #{progname}] #{severity}: #{msg}\n"
+		@ext_formatter = proc do |severity, datetime, progname, meta, msg|
+			if formatter
+				formatter.call(severity, datetime, progname, meta, msg)
+			else
+				"#{datetime.utc.strftime "%Y-%m-%d %H:%M:%S.%6N %Z"} #{meta.to_s} #{severity}: #{msg}\n"
+			end
 		end
 
-		self.formatter = formatter
+		@meta = MetaData.new
+		@meta['pid'] = $$
+
+		self.formatter = proc do |severity, datetime, progname, msg|
+			@ext_formatter.call(severity, datetime, progname, @meta, msg)
+		end
 	end
 
 	def logger_for(class_obj)
@@ -59,6 +73,19 @@ class RootLogger < Logger
 
 	def root_logger
 		self
+	end
+
+	attr_accessor :meta
+
+	def with_meta(hash)
+		n = self.dup
+		n.meta = @meta.merge hash
+
+		# capture new meta hash with this new formatter proc - needed since old formatter proc will point to old object
+		n.formatter = proc do |severity, datetime, progname, msg|
+			@ext_formatter.call(severity, datetime, progname, n.meta, msg)
+		end
+		n
 	end
 
 	def inspect
@@ -74,12 +101,12 @@ class SyslogLogDev
 		Syslog.constants.include? facility or fail "No such syslog facility: #{facility}"
 		facility = Syslog.const_get facility
 
-		@log_level_mapping = Hash[%w{DEBUG INFO WARN ERROR FATAL UNKNOWN}.zip(
-			[Syslog::LOG_DEBUG, Syslog::LOG_INFO, Syslog::LOG_WARNING, Syslog::LOG_ERR, Syslog::LOG_CRIT, Syslog::LOG_NOTICE]
+		@log_level_mapping = Hash[%w{DEBUG INFO WARN ERROR FATAL}.zip(
+			[Syslog::LOG_DEBUG, Syslog::LOG_INFO, Syslog::LOG_WARNING, Syslog::LOG_ERR, Syslog::LOG_CRIT]
 		)]
 		@log_level_mapping.default = Syslog::LOG_NOTICE
 
-		flags = Syslog::LOG_PID
+		flags = Syslog::LOG_PID | Syslog::LOG_NDELAY
 
 		if log_to_stderr
 			STDERR.sync = true
@@ -101,15 +128,17 @@ end
 
 class RootSyslogLogger < RootLogger
 	def initialize(program_name, facility = 'daemon', log_to_stderr = false)
-		super(SyslogLogDev.new(program_name, facility, log_to_stderr)) do |severity, datetime, progname, msg|
-			# SyslogLogDev expects messages in format:
-			"#{severity} #{progname}: #{msg}\n"
+		super(SyslogLogDev.new(program_name, facility, log_to_stderr)) do |severity, datetime, progname, meta, msg|
+			# provide severity to SyslogLogDev
+			"#{severity} #{meta} #{msg}\n"
 		end
+
+		@meta.delete 'pid' # pid is already within syslog message header
 	end
 
 	# used when obj is used as log device (access logs)
 	def write(msg)
-		self << "UNKNOWN #{msg}"
+		info(msg)
 	end
 end
 
