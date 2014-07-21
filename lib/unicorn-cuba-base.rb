@@ -94,7 +94,7 @@ class Application
 		Controler.plugin Plugin::ResponseHelpers
 		Controler.plugin Plugin::MemoryLimit
 
-		@main_setup or fail 'no main controler provided'
+		@main_setup or fail 'no main controller provided'
 		main_controler = setup_main(@main_setup) or fail 'no main controler class returned'
 
 		main_controler.use Rack::XIDLogging, root_logger, @settings.xid_header if @settings.xid_header
