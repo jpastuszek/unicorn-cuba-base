@@ -84,9 +84,6 @@ class SyslogLogDev
 		if log_to_stderr
 			STDERR.sync = true
 			flags |= Syslog::LOG_PERROR
-			flags |= Syslog::LOG_ODELAY
-		else
-			flags |= Syslog::LOG_NDELAY
 		end
 
 		@syslog = Syslog.open(program_name, flags, facility)
@@ -94,8 +91,7 @@ class SyslogLogDev
 
 	def write(msg)
 		log_level, msg = *msg.match(/([^ ]+) (.*)/m).captures
-		msg.tr! "\n", "\t"
-		@syslog.log(@log_level_mapping[log_level], msg)
+		@syslog.log(@log_level_mapping[log_level], "%s", msg)
 	end
 
 	def close
@@ -128,22 +124,15 @@ module ClassLogging
 		end
 
 		def log
-			unless @@logger[self]
-				new_root_logger = false
-				# use root logger from ancestor or create new one
-				root_logger =
-					if logging_class = ancestors.find{|an| an != self and an.respond_to? :log}
-						logging_class.log.respond_to?(:root_logger) ? logging_class.log.root_logger : logging_class.log
-					else
-						new_root_logger = true
-						Logger.new(STDERR)
-					end
+			unless @@logger.include? self
+				root_logger = if an = ancestors.find{|an| an != self and an.respond_to? :log and an.log.respond_to? :root_logger}
+					an.log.root_logger
+				else
+					logger.warn 'no root logger found; using default logger'
+					Logger.new(STDERR)
+				end
 
-				root_logger.kind_of? RootLogger::ClassLogger and fail "got ClassLogger root logger: #{self}"
-
-				logger = RootLogger::ClassLogger.new(root_logger, self)
-				logger.warn "new default logger crated" if new_root_logger
-				@@logger[self] = logger
+				@@logger[self] = RootLogger::ClassLogger.new(root_logger, self)
 			end
 			@@logger[self]
 		end

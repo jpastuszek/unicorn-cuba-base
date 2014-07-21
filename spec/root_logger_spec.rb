@@ -69,7 +69,12 @@ describe SyslogLogDev do
 
 	it 'should write messages to syslog expecting first word to be log level' do
 		Capture.stderr{subject.write 'INFO hello world'}.should include '<Info>'
+		Capture.stderr{subject.write 'WARN hello world'}.should include '<Warning>'
 		Capture.stderr{subject.write 'INFO hello world'}.should include 'hello world'
+	end
+
+	it 'should handle multiline log entries' do
+		Capture.stderr{subject.write "INFO hello\nworld"}.should include "<Info>: hello\n\tworld\n"
 	end
 end
 
@@ -106,7 +111,7 @@ describe RootSyslogLogger do
 		Capture.stderr{subject.fatal 'hello world'}.should include '<Critical>'
 	end
 
-	it 'should handle multiline logs by replacing new line with tab' do
-		Capture.stderr{subject.info "hello\nworld\ntest"}.should include "hello\tworld\ttest\t\n"
+	it 'should handle multiline logs by appending tab after new line (done by syslog?)' do
+		Capture.stderr{subject.info "hello\nworld\ntest"}.should include "hello\n\tworld\n\ttest\n"
 	end
 end
