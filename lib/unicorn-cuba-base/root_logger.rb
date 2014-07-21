@@ -15,20 +15,22 @@ class RootLogger < Logger
 
 		def method_missing(name, *args, &block)
 			if @@levels.include? name
-				message = if block_given?
-					self.progname
-				else
-					args.map do |arg|
-						if arg.is_a? Exception
-							"#{arg.class.name}: #{arg.message}\n#{arg.backtrace.join("\n")}"
-						else
-							arg.to_s
-						end
-					end.join(': ')
-				end
+				root_logger = @root_logger.with_meta('className' => @class_name)
 
-				# log with class name
-				@root_logger.with_meta('className' => @class_name).send(name, message.chomp, &block)
+				if block
+					root_logger.send(name, &block)
+				else
+					message = args.first
+
+					if args.last.is_a? Exception
+						error = args.last
+						root_logger = root_logger.with_meta('exceptionClass' => error.class.name)
+						message = "#{error.class.name}: #{error.message}\n#{error.backtrace.join("\n")}"
+					end
+
+					# log with class name
+					root_logger.send(name, message.chomp, &block)
+				end
 			else
 				# forward to root logger
 				@root_logger.send(name, *args, &block)
