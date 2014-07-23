@@ -8,7 +8,9 @@ module Rack
 
 		def call(env)
 			begin
-				@root_logger.with_meta_context(xid: env["HTTP_#{@header_name.upcase.tr('-', '_')}"]) do
+				xid = env["HTTP_#{@header_name.upcase.tr('-', '_')}"]
+				env['xid'] = {@header_name => xid}
+				@root_logger.with_meta_context(xid: xid) do
 					return @app.call(env)
 				end
 			ensure

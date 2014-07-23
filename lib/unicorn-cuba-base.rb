@@ -100,7 +100,7 @@ class Application
 		main_controller.use Rack::XIDLogging, root_logger, @settings.xid_header if @settings.xid_header
 
 		if @settings.syslog_facility
-			main_controller.use Rack::CommonLogger, root_logger.with_meta(type: 'access-log')
+			main_controller.use Rack::CommonLogger, root_logger.with_meta(type: 'http-access')
 		else
 			access_log_file = @settings.access_log_file.open('a+')
 			access_log_file.sync = true

@@ -152,7 +152,7 @@ class SyslogLogDev
 
 	def write(msg)
 		log_level, msg = *msg.match(/([^ ]+) (.*)/m).captures
-		@syslog.log(@log_level_mapping[log_level], "%s", msg)
+		@syslog.log(@log_level_mapping[log_level], "%s", msg.chomp)
 	end
 
 	def close
