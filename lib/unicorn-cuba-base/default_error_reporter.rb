@@ -1,3 +1,5 @@
+require 'pp'
+
 class DefaultErrorReporter < Controller
 	self.define do
 		on error Rack::UnhandledRequest::UnhandledRequestError do |error|

@@ -99,9 +99,7 @@ class Application
 		main_controller = setup_main(@main_setup) or fail 'no main controller class returned'
 
 		main_controller.use Rack::ErrorHandling
-
 		main_controller.use Rack::XIDLogging, root_logger, @settings.xid_header if @settings.xid_header
-
 		if @settings.syslog_facility
 			main_controller.use Rack::CommonLoggerXID, root_logger.with_meta(type: 'http-access')
 		else
@@ -109,7 +107,6 @@ class Application
 			access_log_file.sync = true
 			main_controller.use Rack::CommonLogger, access_log_file
 		end
-
 		main_controller.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
 		main_controller.use Rack::UnhandledRequest
 
