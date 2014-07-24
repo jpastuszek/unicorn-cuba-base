@@ -17,6 +17,7 @@ require_relative 'unicorn-cuba-base/rack/error_handling'
 require_relative 'unicorn-cuba-base/rack/unhandled_request'
 require_relative 'unicorn-cuba-base/rack/memory_limit'
 require_relative 'unicorn-cuba-base/rack/xid_logging'
+require_relative 'unicorn-cuba-base/rack/access_logger'
 
 class Controller < Cuba
 	include ClassLogging
@@ -100,11 +101,11 @@ class Application
 		main_controller.use Rack::XIDLogging, root_logger, @settings.xid_header if @settings.xid_header
 
 		if @settings.syslog_facility
-			main_controller.use Rack::CommonLogger, root_logger.with_meta(type: 'http-access')
+			main_controller.use Rack::AccessLogger, root_logger.with_meta(type: 'http-access')
 		else
 			access_log_file = @settings.access_log_file.open('a+')
 			access_log_file.sync = true
-			main_controller.use Rack::CommonLogger, access_log_file
+			main_controller.use Rack::AccessLogger, access_log_file
 		end
 
 		main_controller.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
