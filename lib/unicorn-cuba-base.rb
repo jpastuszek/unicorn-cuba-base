@@ -98,6 +98,8 @@ class Application
 		@main_setup or fail 'no main controller provided'
 		main_controller = setup_main(@main_setup) or fail 'no main controller class returned'
 
+		main_controller.use Rack::ErrorHandling
+
 		main_controller.use Rack::XIDLogging, root_logger, @settings.xid_header if @settings.xid_header
 
 		if @settings.syslog_facility
@@ -109,7 +111,6 @@ class Application
 		end
 
 		main_controller.use Rack::MemoryLimit, @settings.limit_memory * 1024 ** 2
-		main_controller.use Rack::ErrorHandling
 		main_controller.use Rack::UnhandledRequest
 
 		Unicorn::HttpServer.new(main_controller, unicorn_settings).start.join

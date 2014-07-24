@@ -1,5 +1,3 @@
-require 'pp'
-
 module Rack
 	class ErrorHandling
 		def initialize(app, &block)
@@ -22,7 +20,7 @@ module Rack
 
 					return @app.call(env)
 				rescue
-					raise 
+					raise
 				end
 			end
 		end
