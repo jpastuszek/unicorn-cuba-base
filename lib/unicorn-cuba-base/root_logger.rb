@@ -111,14 +111,15 @@ class RootLogger < Logger
 	end
 
 	def with_meta_context(hash)
-		new_meta = MetaData.new
+		old_meta = @meta
+		new_meta = MetaData.new(old_meta)
 		new_meta.merge! hash
 
 		begin
-			@meta.parent = new_meta
+			@meta = new_meta
 			yield
 		ensure
-			@meta.parent = nil
+			@meta = old_meta
 		end
 	end
 
