@@ -1,5 +1,5 @@
 module Rack
-	class AccessLogger < Rack::CommonLogger
+	class CommonLoggerXID < Rack::CommonLogger
 		def log(env, *args)
 			# this is called after body was sent so it won't be in scope of XIDLogging - setting xid again
 			xid = env['xid'] && env['xid'].first.last
