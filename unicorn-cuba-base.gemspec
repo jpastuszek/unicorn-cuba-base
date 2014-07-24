@@ -18,12 +18,6 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
-    ".idea/encodings.xml",
-    ".idea/misc.xml",
-    ".idea/modules.xml",
-    ".idea/scopes/scope_settings.xml",
-    ".idea/unicorn-cuba-base.iml",
-    ".idea/vcs.xml",
     ".rspec",
     "Gemfile",
     "Gemfile.lock",
