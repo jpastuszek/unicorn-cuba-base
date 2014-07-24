@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "unicorn-cuba-base"
-  s.version = "1.1.2"
+  s.version = "1.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jakub Pastuszek"]
-  s.date = "2013-10-22"
+  s.date = "2014-07-24"
   s.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   s.email = "jpastuszek@gmail.com"
   s.extra_rdoc_files = [
@@ -18,6 +18,12 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
+    ".idea/encodings.xml",
+    ".idea/misc.xml",
+    ".idea/modules.xml",
+    ".idea/scopes/scope_settings.xml",
+    ".idea/unicorn-cuba-base.iml",
+    ".idea/vcs.xml",
     ".rspec",
     "Gemfile",
     "Gemfile.lock",
@@ -32,12 +38,15 @@ Gem::Specification.new do |s|
     "lib/unicorn-cuba-base/plugin/logging.rb",
     "lib/unicorn-cuba-base/plugin/memory_limit.rb",
     "lib/unicorn-cuba-base/plugin/response_helpers.rb",
+    "lib/unicorn-cuba-base/rack/common_logger_xid.rb",
     "lib/unicorn-cuba-base/rack/error_handling.rb",
     "lib/unicorn-cuba-base/rack/memory_limit.rb",
     "lib/unicorn-cuba-base/rack/unhandled_request.rb",
+    "lib/unicorn-cuba-base/rack/xid_logging.rb",
     "lib/unicorn-cuba-base/root_logger.rb",
     "lib/unicorn-cuba-base/stats.rb",
     "lib/unicorn-cuba-base/stats_reporter.rb",
+    "lib/unicorn-cuba-base/uri_ext.rb",
     "spec/memory_limit_spec.rb",
     "spec/root_logger_spec.rb",
     "spec/spec_helper.rb",
@@ -46,7 +55,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/jpastuszek/unicorn-cuba-base"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.25"
+  s.rubygems_version = "1.8.23"
   s.summary = "web appliaction base powered by Unicorn and Cuba"
 
   if s.respond_to? :specification_version then
@@ -62,6 +71,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rspec>, ["~> 2.13"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.9"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
+      s.add_development_dependency(%q<capture-output>, ["~> 1.0"])
     else
       s.add_dependency(%q<cuba>, ["~> 3.0"])
       s.add_dependency(%q<unicorn>, [">= 4.6.2"])
@@ -72,6 +82,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rspec>, ["~> 2.13"])
       s.add_dependency(%q<rdoc>, ["~> 3.9"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
+      s.add_dependency(%q<capture-output>, ["~> 1.0"])
     end
   else
     s.add_dependency(%q<cuba>, ["~> 3.0"])
@@ -83,6 +94,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rspec>, ["~> 2.13"])
     s.add_dependency(%q<rdoc>, ["~> 3.9"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
+    s.add_dependency(%q<capture-output>, ["~> 1.0"])
   end
 end
 
