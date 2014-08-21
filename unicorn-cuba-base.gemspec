@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "unicorn-cuba-base"
-  s.version = "1.2.0"
+  s.version = "1.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jakub Pastuszek"]
-  s.date = "2014-07-28"
+  s.date = "2014-08-21"
   s.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   s.email = "jpastuszek@gmail.com"
   s.extra_rdoc_files = [
