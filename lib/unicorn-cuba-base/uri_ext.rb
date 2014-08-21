@@ -11,15 +11,20 @@ module URI
 	def self.utf_decode(str)
 		pct_decode(str) # decode %XX bits
 		.force_encoding('UTF-8') # Make sure the string is interpreting UTF-8 chars
+		.tap{|uri| validate_string_encoding(uri)}
 		.gsub(/%u([0-9a-z]{4})/) {|s| [$1.to_i(16)].pack("U")} # Decode %uXXXX encoded chars (JavaScript.encode())
-		.tap do |u|
-			# Validate fins string
-			raise URI::InvalidURIError, "invalid UTF-8 encoding in URI: #{u.inspect}" if not u.valid_encoding?
-		end
+		.tap{|uri| validate_string_encoding(uri)}
 	end
+
 
 	# Use it by default
 	def self.decode(str)
 		self.utf_decode(str)
+	end
+
+	private
+
+	def self.validate_string_encoding(uri)
+		raise URI::InvalidURIError, "invalid UTF-8 encoding in URI: #{uri.inspect}" if not uri.valid_encoding?
 	end
 end
