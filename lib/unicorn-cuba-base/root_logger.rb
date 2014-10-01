@@ -1,4 +1,5 @@
 require 'logger'
+require 'json'
 
 class RootLogger < Logger
 	class ClassLogger
@@ -65,7 +66,7 @@ class RootLogger < Logger
 				hash.merge! child
 			end
 
-			"[meta #{hash.map{|k, v| "#{k}=\"#{v.to_s.tr('"', "'")}\""}.join(' ')}]"
+			"[meta #{JSON.dump(hash)}]"
 		end
 	end
 
