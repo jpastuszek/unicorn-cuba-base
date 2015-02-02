@@ -6,7 +6,7 @@ gem "cuba", "~> 3.0"
 gem "unicorn", ">= 4.6.2"
 gem "raindrops", "~> 0.11"
 gem "cli", "~> 1.3"
-gem "facter", "~> 1.6.11"
+gem "facter", ">= 1.6.11"
 gem "ruby-ip", "~> 0.9"
 
 # Add dependencies to develop your gem here.
