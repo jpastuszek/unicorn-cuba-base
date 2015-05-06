@@ -58,25 +58,25 @@ describe RootLogger do
 	describe 'meta data' do
 		it 'should log with metadata in RFC5424 format' do
 			subject.with_meta(type: 'access-log').info 'GET /asdfas'
-			log_out.string.should include 'type="access-log"'
+			log_out.string.should include '"type":"access-log"'
 
 			subject.info 'GET /asdfas'
-			log_out.string.lines.to_a.last.should_not include 'type="access-log"'
+			log_out.string.lines.to_a.last.should_not include '"type":"access-log"'
 		end
 
 		it 'should work with chaining' do
 			subject.with_meta(type: 'access-log').with_meta(blah: 'xxx').info 'GET /asdfas'
-			log_out.string.should include 'type="access-log" blah="xxx"'
+			log_out.string.should include '"type":"access-log","blah":"xxx"'
 		end
 
 		it 'should log with metadata context' do
 			subject.with_meta_context(type: 'app-log') do
 				subject.info 'GET /asdfas'
 			end
-			log_out.string.should include 'type="app-log"'
+			log_out.string.should include '"type":"app-log"'
 
 			subject.info 'GET /asdfas'
-			log_out.string.lines.to_a.last.should_not include 'type="app-log"'
+			log_out.string.lines.to_a.last.should_not include '"type":"app-log"'
 		end
 	end
 end
@@ -146,7 +146,7 @@ describe RootSyslogLogger do
 		end
 
 		it 'should allow use of meta data' do
-			Capture.stderr{subject.with_meta('type' => 'access-log').write "hello world"}.should include 'type="access-log"'
+			Capture.stderr{subject.with_meta('type' => 'access-log').write "hello world"}.should include '"type":"access-log"'
 		end
 	end
 end
