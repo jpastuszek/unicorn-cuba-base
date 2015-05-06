@@ -65,7 +65,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<ruby-ip>, ["~> 0.9"])
       s.add_development_dependency(%q<rspec>, ["~> 2.13"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.9"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.8.4"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.8.8"])
       s.add_development_dependency(%q<capture-output>, ["~> 1.0"])
     else
       s.add_dependency(%q<cuba>, ["~> 3.0"])
@@ -76,7 +76,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<ruby-ip>, ["~> 0.9"])
       s.add_dependency(%q<rspec>, ["~> 2.13"])
       s.add_dependency(%q<rdoc>, ["~> 3.9"])
-      s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
+      s.add_dependency(%q<jeweler>, ["~> 1.8.8"])
       s.add_dependency(%q<capture-output>, ["~> 1.0"])
     end
   else
@@ -88,7 +88,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<ruby-ip>, ["~> 0.9"])
     s.add_dependency(%q<rspec>, ["~> 2.13"])
     s.add_dependency(%q<rdoc>, ["~> 3.9"])
-    s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
+    s.add_dependency(%q<jeweler>, ["~> 1.8.8"])
     s.add_dependency(%q<capture-output>, ["~> 1.0"])
   end
 end
