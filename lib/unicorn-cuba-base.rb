@@ -27,6 +27,8 @@ require_relative 'unicorn-cuba-base/stats_reporter'
 require_relative 'unicorn-cuba-base/default_error_reporter'
 
 class Application
+	include ClassLogging
+
 	def cli(&block)
 		@cli_setup = block
 	end
@@ -44,7 +46,7 @@ class Application
 	end
 
 	def initialize(program_name, defaults = {}, &block)
-		instance_eval &block
+		instance_eval(&block)
 
 		@cli = setup_cli(program_name, defaults, @cli_setup) or fail 'no cli defined'
 		@settings = @settings_setup ? setup_settings(@settings_setup) : @cli.parse!
@@ -95,6 +97,9 @@ class Application
 		Controller.plugin Plugin::ResponseHelpers
 		Controller.plugin Plugin::MemoryLimit
 
+		self.class.logger = root_logger.logger_for(self.class)
+		log.info "#{program_name} starting up; pid: #{Process.pid}"
+
 		@main_setup or fail 'no main controller provided'
 		main_controller = setup_main(@main_setup) or fail 'no main controller class returned'
 
@@ -117,7 +122,7 @@ class Application
 
 	def setup_cli(program_name, defaults, block)
 		CLI.new do
-			instance_eval &block
+			instance_eval(&block)
 			option :log_file,
 				short: :l,
 				cast: Pathname,
