@@ -14,6 +14,6 @@ gem "ruby-ip", "~> 0.9"
 group :development do
   gem "rspec", "~> 2.13"
   gem "rdoc", "~> 3.9"
-  gem "jeweler", "~> 1.8.4"
+  gem "jeweler", "~> 1.8.8"
   gem "capture-output", "~> 1.0"
 end
