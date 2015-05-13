@@ -8,6 +8,7 @@ require 'ip'
 
 require_relative 'unicorn-cuba-base/uri_ext'
 require_relative 'unicorn-cuba-base/stats'
+require_relative 'unicorn-cuba-base/perf_stats'
 require_relative 'unicorn-cuba-base/root_logger'
 require_relative 'unicorn-cuba-base/plugin/error_matcher'
 require_relative 'unicorn-cuba-base/plugin/logging'
