@@ -75,4 +75,4 @@ DEPENDENCIES
   rdoc (~> 3.9)
   rspec (~> 2.13)
   ruby-ip (~> 0.9)
-  unicorn (~> 4.6.2)
+  unicorn (~> 4.6, >= 4.6.2)
