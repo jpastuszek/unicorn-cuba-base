@@ -73,6 +73,8 @@ class RootLogger < Logger
 	def initialize(logdev = STDERR, &formatter)
 		super(logdev)
 
+		@perf_enabled = false
+
 		@ext_formatter = proc do |severity, datetime, progname, meta, msg|
 			if formatter
 				formatter.call(severity, datetime, progname, meta, msg)
@@ -92,6 +94,10 @@ class RootLogger < Logger
 	def enable_perf_logging
 		@perf_enabled = true
 		self
+	end
+
+	def perf?
+		@perf_enabled
 	end
 
 	def perf(msg)

@@ -86,6 +86,10 @@ describe RootLogger do
 			log_out.string.should_not include 'test'
 		end
 
+		it '#perf? should be false' do
+			subject.perf?.should be false
+		end
+
 		context 'when enabled' do
 			subject do
 				log = RootLogger.new(log_out)
@@ -97,6 +101,10 @@ describe RootLogger do
 			it 'should be always logged' do
 				subject.perf 'test'
 				log_out.string.should include 'test'
+			end
+
+			it '#perf? should be true' do
+				subject.perf?.should be true
 			end
 		end
 	end
