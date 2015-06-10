@@ -79,6 +79,27 @@ describe RootLogger do
 			log_out.string.lines.to_a.last.should_not include '"type":"app-log"'
 		end
 	end
+
+	describe 'logging performance statistics' do
+		it 'should be disabled by default' do
+			subject.perf 'test'
+			log_out.string.should_not include 'test'
+		end
+
+		context 'when enabled' do
+			subject do
+				log = RootLogger.new(log_out)
+				log.enable_perf_logging
+				log.level = RootLogger::FATAL
+				log
+			end
+
+			it 'should be always logged' do
+				subject.perf 'test'
+				log_out.string.should include 'test'
+			end
+		end
+	end
 end
 
 require 'capture-output'

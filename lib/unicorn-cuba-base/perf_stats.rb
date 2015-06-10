@@ -21,7 +21,7 @@ module PerfStats
 			task: task,
 			object: object,
 			level: $perf_stats_nest_level
-		).info "took #{"%0.6f" % took.real} sec - #{task}#{object ? ": #{object}" : ''}"
+		).perf "took #{"%0.6f" % took.real} sec - #{task}#{object ? ": #{object}" : ''}"
 		ret
 	ensure
 		$perf_stats_nest_level -= 1

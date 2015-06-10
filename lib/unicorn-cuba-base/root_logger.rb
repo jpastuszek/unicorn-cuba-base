@@ -89,6 +89,15 @@ class RootLogger < Logger
 		end
 	end
 
+	def enable_perf_logging
+		@perf_enabled = true
+		self
+	end
+
+	def perf(msg)
+		unknown(msg) if @perf_enabled
+	end
+
 	def logger_for(class_obj)
 		ClassLogger.new(self, class_obj)
 	end

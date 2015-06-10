@@ -63,6 +63,7 @@ class Application
 		root_logger.level = RootLogger::WARN
 		root_logger.level = RootLogger::INFO if @settings.verbose
 		root_logger.level = RootLogger::DEBUG if @settings.debug
+		root_logger.enable_perf_logging if @settings.perf_stats
 		Controller.logger = root_logger
 		MemoryLimit.logger = Controller.logger_for(MemoryLimit)
 
@@ -175,6 +176,9 @@ class Application
 			switch :debug,
 				short: :d,
 				description: 'enable verbose and debug logging (DEBUG)'
+			switch :perf_stats,
+				short: :V,
+				description: 'enable logging of performance statistics on ANY level'
 		end
 	end
 
