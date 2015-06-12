@@ -15,7 +15,7 @@ module PerfStats
 					ret = yield
 				end
 				log.with_meta(
-					className: "PerfStats",
+					type: 'perf-stats',
 					user_time: took.utime.round(6),
 					system_time:took.stime.round(6),
 					total_time: took.total.round(6),
