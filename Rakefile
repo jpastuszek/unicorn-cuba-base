@@ -17,10 +17,13 @@ Jeweler::Tasks.new do |gem|
   gem.name = "unicorn-cuba-base"
   gem.homepage = "http://github.com/jpastuszek/unicorn-cuba-base"
   gem.license = "MIT"
-  gem.summary = "web appliaction base powered by Unicorn and Cuba"
-  gem.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
+  gem.summary = "Web appliaction base powered by Unicorn and Cuba"
+  gem.description = "Web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   gem.email = "jpastuszek@gmail.com"
   gem.authors = ["Jakub Pastuszek"]
+  gem.files.exclude "spec/**/*"
+  gem.files.exclude "*.gemspec"
+  gem.files.exclude ".rspec"
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new

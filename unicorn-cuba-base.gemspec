@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Jakub Pastuszek"]
-  s.date = "2015-06-03"
-  s.description = "web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
+  s.date = "2015-06-17"
+  s.description = "Web application base powered by Unicorn HTTP server and based on Cuba framework extended with additional Rack middleware and Cuba plugins"
   s.email = "jpastuszek@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
-    ".rspec",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
@@ -43,16 +42,12 @@ Gem::Specification.new do |s|
     "lib/unicorn-cuba-base/root_logger.rb",
     "lib/unicorn-cuba-base/stats.rb",
     "lib/unicorn-cuba-base/stats_reporter.rb",
-    "lib/unicorn-cuba-base/uri_ext.rb",
-    "spec/memory_limit_spec.rb",
-    "spec/root_logger_spec.rb",
-    "spec/spec_helper.rb",
-    "unicorn-cuba-base.gemspec"
+    "lib/unicorn-cuba-base/uri_ext.rb"
   ]
   s.homepage = "http://github.com/jpastuszek/unicorn-cuba-base"
   s.licenses = ["MIT"]
   s.rubygems_version = "2.4.7"
-  s.summary = "web appliaction base powered by Unicorn and Cuba"
+  s.summary = "Web appliaction base powered by Unicorn and Cuba"
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
